@@ -1,6 +1,15 @@
 # LaTeXCloudBuilder
 
-
+```bash
+cd app
+docker build -t latex-build-app .
+docker run -p 8080:8080 latex-build-app
+```
+In an other shell
+```bash
+python3 script/compile_tex.py templates/example_template.tex templates/references.bib
+# ENJOY
+```
 
 
 
