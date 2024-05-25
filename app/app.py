@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 import os
 import subprocess
 import tempfile
@@ -29,11 +29,18 @@ def compile_tex():
                 bib_file.write(bib_content)
 
         # Run LaTeX to compile the document
-        subprocess.run(['pdflatex', 'document.tex'], cwd=temp_dir, check=True)
+        try:
+            subprocess.run(['pdflatex', 'document.tex'], cwd=temp_dir, check=True)
+        except subprocess.CalledProcessError as e:
+            return jsonify({"error": "LaTeX compilation failed", "details": str(e)}), 500
+
         if bib_content:
-            subprocess.run(['bibtex', 'document.aux'], cwd=temp_dir, check=True)
-            subprocess.run(['pdflatex', 'document.tex'], cwd=temp_dir, check=True)
-            subprocess.run(['pdflatex', 'document.tex'], cwd=temp_dir, check=True)
+            try:
+                subprocess.run(['bibtex', 'document'], cwd=temp_dir, check=True)
+                subprocess.run(['pdflatex', 'document.tex'], cwd=temp_dir, check=True)
+                subprocess.run(['pdflatex', 'document.tex'], cwd=temp_dir, check=True)
+            except subprocess.CalledProcessError as e:
+                return jsonify({"error": "BibTeX compilation failed", "details": str(e)}), 500
 
         # Read the generated PDF
         pdf_path = os.path.join(temp_dir, 'document.pdf')
@@ -42,8 +49,8 @@ def compile_tex():
 
         return jsonify({"pdf": pdf_data.decode('latin1')}), 200
 
-    except subprocess.CalledProcessError as e:
-        return jsonify({"error": "LaTeX compilation failed", "details": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": "Unexpected error", "details": str(e)}), 500
 
     finally:
         # Clean up the temporary directory
@@ -51,4 +58,3 @@ def compile_tex():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-

@@ -1,0 +1,22 @@
+{
+  "CodeRepository": {
+    "RepositoryUrl": "https://github.com/mr-koya/LaTeXCloudBuilder",
+    "SourceCodeVersion": {
+      "Type": "BRANCH",
+      "Value": "main"
+    },
+    "SourceDirectory": "/app",
+    "CodeConfiguration": {
+      "ConfigurationSource": "API",
+      "CodeConfigurationValues": {
+        "Runtime": "PYTHON_3",
+        "BuildCommand": "docker build -t latex-build-app .",
+        "StartCommand": "docker run -p 8080:8080 latex-build-app"
+      }
+    }
+  },
+  "AutoDeploymentsEnabled": true,
+  "AuthenticationConfiguration": {
+    "ConnectionArn": "arn:aws:apprunner:us-east-2:500412137024:connection/mr-koya-latex/d7031c07fd4847f29c128064cdb5ddda"
+  }
+}
