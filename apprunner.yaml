@@ -1,0 +1,14 @@
+version: 1.0
+runtime: docker
+
+# Directory to execute build and start commands
+sourceDirectory: /app
+
+# Build command (if necessary)
+build:
+  buildCommand: "docker build -t latex-build-app ."
+
+# Start command to run your application
+start:
+  startCommand: "docker run -p 8080:8080 latex-build-app"
+
